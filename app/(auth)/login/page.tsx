@@ -1,100 +1,16 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { ArrowRight, CheckCircle2, LockKeyhole } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { trackEvent } from "@/lib/analytics";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const supabase = createClient();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setError(null);
-    const { error } = await supabase.auth.signInWithPassword({ email, password });
-    setLoading(false);
-    if (error) {
-      setError(error.message);
-      return;
-    }
-    trackEvent("login");
-    router.push("/dashboard");
-    router.refresh();
-  }
-
-  return (
-    <div className="flex-1 flex items-center justify-center bg-[var(--color-paper)] px-6 py-16">
-      <div className="w-full max-w-sm">
-        <Link href="/" className="font-serif text-lg font-semibold">
-          Passage
-        </Link>
-        <h1 className="font-serif text-2xl mt-8 mb-1">Welcome back</h1>
-        <p className="text-sm text-[var(--color-muted)] mb-8">
-          Log in to your application workspace.
-        </p>
-
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label htmlFor="email" className="block text-sm font-medium mb-1.5">
-              Email
-            </label>
-            <input
-              id="email"
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full rounded-sm border border-[var(--color-line)] bg-white px-3 py-2.5 text-sm focus:border-[var(--color-brass)] focus:outline-none"
-            />
-          </div>
-          <div>
-            <div className="flex items-center justify-between mb-1.5">
-              <label htmlFor="password" className="block text-sm font-medium">
-                Password
-              </label>
-              <Link href="/forgot-password" className="text-xs text-[var(--color-brass)] hover:underline">
-                Forgot password?
-              </Link>
-            </div>
-            <input
-              id="password"
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full rounded-sm border border-[var(--color-line)] bg-white px-3 py-2.5 text-sm focus:border-[var(--color-brass)] focus:outline-none"
-            />
-          </div>
-
-          {error && (
-            <p className="text-sm text-[var(--color-urgent)] bg-[var(--color-urgent-soft)] rounded-sm px-3 py-2">
-              {error}
-            </p>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-sm bg-[var(--color-ink)] px-4 py-2.5 text-white font-medium hover:bg-[var(--color-ink-soft)] disabled:opacity-60"
-          >
-            {loading ? "Logging in…" : "Log in"}
-          </button>
-        </form>
-
-        <p className="mt-6 text-sm text-[var(--color-muted)]">
-          New here?{" "}
-          <Link href="/signup" className="text-[var(--color-brass)] font-medium hover:underline">
-            Create an account
-          </Link>
-        </p>
-      </div>
-    </div>
-  );
+  const router = useRouter(); const supabase = createClient();
+  const [email, setEmail] = useState(""); const [password, setPassword] = useState(""); const [error, setError] = useState<string | null>(null); const [loading, setLoading] = useState(false);
+  async function handleSubmit(e: React.FormEvent) { e.preventDefault(); setLoading(true); setError(null); const { error } = await supabase.auth.signInWithPassword({ email, password }); setLoading(false); if (error) { setError(error.message); return; } trackEvent("login"); router.push("/dashboard"); router.refresh(); }
+  return <div className="flex min-h-screen flex-1 bg-[var(--color-paper)]"><div className="hidden flex-1 flex-col justify-between bg-[var(--color-ink)] p-10 text-white lg:flex"><Link href="/"><Image src="/passage.png" alt="Passage" width={140} height={40} className="h-9 w-auto object-contain" /></Link><div className="max-w-md"><p className="mb-4 text-xs font-bold uppercase tracking-[.18em] text-[#ffb094]">Your application workspace</p><h2 className="font-serif text-5xl leading-tight">Make progress on the opportunities that matter.</h2><p className="mt-6 leading-7 text-slate-300">Track what each scholarship needs, keep your documents ready, and move forward with confidence.</p><div className="mt-8 space-y-3 text-sm font-semibold text-slate-200"><p className="flex items-center gap-3"><CheckCircle2 className="text-[#ff9a73]" size={18} />A clear view of your readiness</p><p className="flex items-center gap-3"><CheckCircle2 className="text-[#ff9a73]" size={18} />Deadlines and requirements in one place</p></div></div><p className="text-xs text-slate-400">Official details always remain linked to their source.</p></div><div className="flex flex-1 items-center justify-center px-6 py-12 sm:px-10"><div className="w-full max-w-md"><Link href="/" className="lg:hidden"><Image src="/passage.png" alt="Passage" width={128} height={36} className="h-8 w-auto object-contain" /></Link><div className="mt-10 rounded-3xl border border-[var(--color-line)] bg-white p-7 shadow-[0_20px_60px_rgba(16,35,63,.08)] sm:p-10 lg:mt-0"><div className="mb-8"><div className="mb-5 flex size-11 items-center justify-center rounded-xl bg-[var(--color-brass-soft)] text-[var(--color-brass)]"><LockKeyhole size={20} /></div><h1 className="font-serif text-3xl">Welcome back</h1><p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">Log in to continue preparing for your next opportunity.</p></div><form onSubmit={handleSubmit} className="space-y-5"><div><label htmlFor="email" className="mb-2 block text-sm font-bold">Email</label><input id="email" type="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full rounded-xl border border-[var(--color-line)] bg-[var(--color-paper)] px-4 py-3 text-sm transition focus:border-[var(--color-brass)] focus:bg-white focus:outline-none" /></div><div><div className="mb-2 flex items-center justify-between"><label htmlFor="password" className="block text-sm font-bold">Password</label><Link href="/forgot-password" className="text-xs font-bold text-[var(--color-brass)] hover:underline">Forgot password?</Link></div><input id="password" type="password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full rounded-xl border border-[var(--color-line)] bg-[var(--color-paper)] px-4 py-3 text-sm transition focus:border-[var(--color-brass)] focus:bg-white focus:outline-none" /></div>{error && <p role="alert" className="rounded-xl border border-[var(--color-urgent)]/20 bg-[var(--color-urgent-soft)] px-4 py-3 text-sm text-[var(--color-urgent)]">{error}</p>}<button type="submit" disabled={loading} className="btn-primary w-full disabled:cursor-not-allowed disabled:opacity-60">{loading ? "Logging in…" : "Log in"}<ArrowRight size={17} /></button></form><p className="mt-7 text-center text-sm text-[var(--color-muted)]">New to Passage? <Link href="/signup" className="font-bold text-[var(--color-brass)] hover:underline">Create an account</Link></p></div></div></div></div>;
 }
