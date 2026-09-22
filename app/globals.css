@@ -2,34 +2,115 @@
 
 @theme {
   --font-serif: Charter, "Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052, serif;
-  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --font-sans: Inter, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+
   --color-ink: #10233f;
   --color-ink-soft: #243b5a;
-  --color-paper: #f7f9fc;
-  --color-paper-dim: #eef3f8;
-  --color-line: #dbe4ee;
+  --color-paper: #f6f8fb;
+  --color-paper-dim: #edf2f7;
+  --color-line: #dfe8f1;
   --color-brass: #f26b38;
-  --color-brass-soft: #fff0e9;
+  --color-brass-soft: #fff1ea;
   --color-verified: #147a62;
-  --color-verified-soft: #e9f8f2;
+  --color-verified-soft: #ebfaf4;
   --color-urgent: #c24135;
   --color-urgent-soft: #fff0ef;
   --color-muted: #607089;
 }
 
-:root { color-scheme: light; }
-html { scroll-behavior: smooth; }
-body { background: var(--color-paper); color: var(--color-ink); font-family: var(--font-sans); }
-.font-serif { font-family: var(--font-serif); }
+:root {
+  color-scheme: light;
+}
 
-@keyframes passage-rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-.animate-rise { animation: passage-rise .6s cubic-bezier(.22,1,.36,1) both; }
-.card-lift { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
-.card-lift:hover { transform: translateY(-3px); box-shadow: 0 16px 36px rgba(16,35,63,.09); border-color: #c6d3e2; }
-.btn-primary { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; border-radius:.7rem; background:var(--color-brass); padding:.7rem 1rem; color:white; font-weight:700; transition: background .2s ease, transform .2s ease, box-shadow .2s ease; box-shadow:0 8px 18px rgba(242,107,56,.2); }
-.btn-primary:hover { background:#dc5527; transform:translateY(-1px); box-shadow:0 10px 22px rgba(242,107,56,.28); }
-.btn-secondary { display:inline-flex; align-items:center; justify-content:center; gap:.5rem; border:1px solid var(--color-line); border-radius:.7rem; background:white; padding:.7rem 1rem; color:var(--color-ink); font-weight:700; transition:background .2s ease, border-color .2s ease; }
-.btn-secondary:hover { background:var(--color-paper-dim); border-color:#b9c9db; }
+html {
+  scroll-behavior: smooth;
+}
 
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration:.01ms !important; animation-iteration-count:1 !important; transition-duration:.01ms !important; scroll-behavior:auto !important; } }
-:focus-visible { outline: 3px solid rgba(242,107,56,.55); outline-offset: 3px; }
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+@keyframes passage-rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-rise {
+  animation: passage-rise 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+.card-lift {
+  transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.card-lift:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 18px 40px rgba(16, 35, 63, 0.08);
+  border-color: #c6d3e2;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border-radius: 0.8rem;
+  background: var(--color-brass);
+  padding: 0.8rem 1.1rem;
+  color: white;
+  font-weight: 700;
+  box-shadow: 0 10px 24px rgba(242, 107, 56, 0.22);
+  transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+}
+
+.btn-primary:hover {
+  background: #dd5b2b;
+  transform: translateY(-1px);
+  box-shadow: 0 12px 28px rgba(242, 107, 56, 0.28);
+}
+
+.btn-secondary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid var(--color-line);
+  border-radius: 0.8rem;
+  background: white;
+  padding: 0.8rem 1.1rem;
+  color: var(--color-ink);
+  font-weight: 700;
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+}
+
+.btn-secondary:hover {
+  background: var(--color-paper-dim);
+  border-color: #bfd0e1;
+  transform: translateY(-1px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+:focus-visible {
+  outline: 3px solid rgba(242, 107, 56, 0.52);
+  outline-offset: 3px;
+}
