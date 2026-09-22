@@ -2,174 +2,24 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { LayoutDashboard, Compass, FolderKanban, Calculator, LogOut, ShieldCheck, Target, Sparkles, Bookmark, FileStack, CalendarDays } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { NotificationBell } from "@/components/NotificationBell";
 
-// Shown on both the mobile bottom bar and the desktop sidebar.
-const NAV = [
-  { href: "/dashboard", label: "Home", icon: LayoutDashboard },
-  { href: "/opportunities", label: "Explore", icon: Compass },
-  { href: "/applications", label: "Applications", icon: FolderKanban },
-  { href: "/planning", label: "Planning", icon: Target },
-  { href: "/tools/cgpa", label: "CGPA Tool", icon: Calculator },
-];
-
-// Desktop sidebar only — keeps the mobile bottom bar to 5 comfortable taps.
-const SECONDARY_NAV: { href: string; label: string; icon: typeof Bookmark; badge?: string }[] = [
-  { href: "/saved", label: "Saved", icon: Bookmark },
-  { href: "/documents", label: "Documents", icon: FileStack },
-  { href: "/calendar", label: "Calendar", icon: CalendarDays },
-  { href: "/ai", label: "AI Tools", icon: Sparkles, badge: "Soon" },
-];
+const NAV = [{ href: "/dashboard", label: "Overview", icon: LayoutDashboard }, { href: "/opportunities", label: "Explore", icon: Compass }, { href: "/applications", label: "Applications", icon: FolderKanban }, { href: "/planning", label: "My plan", icon: Target }, { href: "/tools/cgpa", label: "CGPA tool", icon: Calculator }];
+const SECONDARY_NAV: { href: string; label: string; icon: typeof Bookmark; badge?: string }[] = [{ href: "/saved", label: "Saved", icon: Bookmark }, { href: "/documents", label: "Documents", icon: FileStack }, { href: "/calendar", label: "Calendar", icon: CalendarDays }, { href: "/ai", label: "AI tools", icon: Sparkles, badge: "Soon" }];
 
 export function AppShell({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
-  const router = useRouter();
-  const supabase = createClient();
-  const [isAdmin, setIsAdmin] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
-      if (!user) return;
-      const { data } = await supabase.from("profiles").select("is_admin").eq("id", user.id).single();
-      if (!cancelled) setIsAdmin(Boolean(data?.is_admin));
-    });
-    return () => {
-      cancelled = true;
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const pathname = usePathname(); const router = useRouter(); const supabase = createClient(); const [isAdmin, setIsAdmin] = useState(false);
+  useEffect(() => { let cancelled = false; supabase.auth.getUser().then(async ({ data: { user } }) => { if (!user) return; const { data } = await supabase.from("profiles").select("is_admin").eq("id", user.id).single(); if (!cancelled) setIsAdmin(Boolean(data?.is_admin)); }); return () => { cancelled = true; }; // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  async function handleLogout() {
-    await supabase.auth.signOut();
-    router.push("/");
-    router.refresh();
-  }
-
-  return (
-    <div className="flex-1 flex flex-col md:flex-row bg-[var(--color-paper)]">
-      {/* Desktop sidebar */}
-      <aside className="hidden md:flex md:flex-col md:w-56 md:border-r border-[var(--color-line)] md:min-h-screen">
-        <div className="px-6 py-5 flex items-center justify-between">
-          <Link href="/dashboard" className="font-serif text-lg font-semibold">
-            Passage
-          </Link>
-          <NotificationBell />
-        </div>
-        <nav className="flex flex-col px-3 py-4 gap-1">
-          {NAV.map((item) => {
-            const active = pathname?.startsWith(item.href);
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-2.5 rounded-sm px-3 py-2 text-sm font-medium transition-colors ${
-                  active
-                    ? "bg-[var(--color-brass-soft)] text-[var(--color-brass)]"
-                    : "text-[var(--color-ink-soft)] hover:bg-[var(--color-paper-dim)]"
-                }`}
-              >
-                <Icon size={16} strokeWidth={2} />
-                {item.label}
-              </Link>
-            );
-          })}
-          {SECONDARY_NAV.map((item) => {
-            const active = pathname?.startsWith(item.href);
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex items-center gap-2.5 rounded-sm px-3 py-2 text-sm font-medium transition-colors ${
-                  active
-                    ? "bg-[var(--color-brass-soft)] text-[var(--color-brass)]"
-                    : "text-[var(--color-ink-soft)] hover:bg-[var(--color-paper-dim)]"
-                }`}
-              >
-                <Icon size={16} strokeWidth={2} />
-                {item.label}
-                {item.badge && (
-                  <span className="ml-auto text-[9px] font-medium uppercase tracking-wide text-[var(--color-brass)] bg-[var(--color-brass-soft)] px-1.5 py-0.5 rounded-sm">
-                    {item.badge}
-                  </span>
-                )}
-              </Link>
-            );
-          })}
-          {isAdmin && (
-            <Link
-              href="/admin"
-              className={`flex items-center gap-2.5 rounded-sm px-3 py-2 text-sm font-medium transition-colors ${
-                pathname?.startsWith("/admin")
-                  ? "bg-[var(--color-brass-soft)] text-[var(--color-brass)]"
-                  : "text-[var(--color-ink-soft)] hover:bg-[var(--color-paper-dim)]"
-              }`}
-            >
-              <ShieldCheck size={16} strokeWidth={2} />
-              Admin
-            </Link>
-          )}
-          <button
-            onClick={handleLogout}
-            className="flex items-center gap-2.5 rounded-sm px-3 py-2 text-sm font-medium text-[var(--color-muted)] hover:bg-[var(--color-paper-dim)] mt-4"
-          >
-            <LogOut size={16} strokeWidth={2} />
-            Log out
-          </button>
-        </nav>
-      </aside>
-
-      {/* Mobile top bar */}
-      <div className="flex md:hidden items-center justify-between px-5 py-4 border-b border-[var(--color-line)] bg-[var(--color-paper)]/90 backdrop-blur sticky top-0 z-20">
-        <Link href="/dashboard" className="font-serif text-lg font-semibold">
-          Passage
-        </Link>
-        <div className="flex items-center gap-1">
-          <NotificationBell />
-          <button
-            onClick={handleLogout}
-            aria-label="Log out"
-            className="text-[var(--color-muted)] hover:text-[var(--color-ink)] p-1.5"
-          >
-            <LogOut size={18} strokeWidth={2} />
-          </button>
-        </div>
-      </div>
-
-      <main className="flex-1 min-w-0 pb-20 md:pb-0">{children}</main>
-
-      {/* Mobile bottom nav */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-30 border-t border-[var(--color-line)] bg-white/95 backdrop-blur pb-[env(safe-area-inset-bottom)]">
-        <div className="grid" style={{ gridTemplateColumns: `repeat(${NAV.length}, minmax(0, 1fr))` }}>
-          {NAV.map((item) => {
-            const active = pathname?.startsWith(item.href);
-            const Icon = item.icon;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="relative flex flex-col items-center gap-0.5 py-2.5 text-[9px] font-medium px-0.5"
-              >
-                <span
-                  className={`flex items-center justify-center size-7 rounded-full transition-all ${
-                    active ? "bg-[var(--color-brass-soft)] text-[var(--color-brass)] scale-105" : "text-[var(--color-muted)]"
-                  }`}
-                >
-                  <Icon size={16} strokeWidth={2} />
-                </span>
-                <span className={`truncate max-w-full ${active ? "text-[var(--color-brass)]" : "text-[var(--color-muted)]"}`}>
-                  {item.label}
-                </span>
-              </Link>
-            );
-          })}
-        </div>
-      </nav>
-    </div>
-  );
+  async function handleLogout() { await supabase.auth.signOut(); router.push("/"); router.refresh(); }
+  const renderLink = (item: { href: string; label: string; icon: typeof Bookmark; badge?: string }) => { const active = pathname?.startsWith(item.href); const Icon = item.icon; return <Link key={item.href} href={item.href} className={`group flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold transition-all ${active ? "bg-[var(--color-brass-soft)] text-[var(--color-brass)] shadow-sm" : "text-[var(--color-muted)] hover:bg-[var(--color-paper-dim)] hover:text-[var(--color-ink)]"}`}><Icon size={17} strokeWidth={active ? 2.4 : 2} />{item.label}{item.badge && <span className="ml-auto rounded-full bg-[var(--color-paper-dim)] px-2 py-0.5 text-[9px] uppercase tracking-wide text-[var(--color-muted)]">{item.badge}</span>}</Link>; };
+  return <div className="flex min-h-screen flex-1 flex-col bg-[var(--color-paper)] md:flex-row">
+    <aside className="hidden w-64 shrink-0 flex-col border-r border-[var(--color-line)] bg-white md:flex"><div className="flex items-center justify-between px-6 py-6"><Link href="/dashboard" aria-label="Passage dashboard"><Image src="/passage.png" alt="Passage" width={128} height={37} className="h-8 w-auto object-contain" /></Link><NotificationBell /></div><div className="mx-5 mb-5 rounded-2xl bg-[var(--color-ink)] p-4 text-white"><p className="text-[10px] font-bold uppercase tracking-[.15em] text-[#ffb094]">Your workspace</p><p className="mt-1 text-sm font-semibold leading-5">Make progress on the opportunities that matter.</p></div><nav className="flex flex-col gap-1 px-3">{NAV.map(renderLink)}<div className="my-3 border-t border-[var(--color-line)]" />{SECONDARY_NAV.map(renderLink)}{isAdmin && renderLink({ href: "/admin", label: "Admin", icon: ShieldCheck })}<button onClick={handleLogout} className="mt-5 flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-semibold text-[var(--color-muted)] hover:bg-[var(--color-paper-dim)] hover:text-[var(--color-ink)]"><LogOut size={17} />Log out</button></nav></aside>
+    <div className="flex min-w-0 flex-1 flex-col"><div className="sticky top-0 z-20 flex items-center justify-between border-b border-[var(--color-line)] bg-white/90 px-5 py-4 backdrop-blur-xl md:hidden"><Link href="/dashboard"><Image src="/passage.png" alt="Passage" width={112} height={32} className="h-7 w-auto object-contain" /></Link><div className="flex items-center gap-2"><NotificationBell /><button onClick={handleLogout} aria-label="Log out" className="rounded-lg p-2 text-[var(--color-muted)] hover:bg-[var(--color-paper-dim)]"><LogOut size={18} /></button></div></div><main className="min-w-0 flex-1 pb-24 md:pb-0">{children}</main></div>
+    <nav className="fixed bottom-0 left-0 right-0 z-30 border-t border-[var(--color-line)] bg-white/95 pb-[env(safe-area-inset-bottom)] backdrop-blur-xl md:hidden"><div className="grid" style={{ gridTemplateColumns: `repeat(${NAV.length}, minmax(0, 1fr))` }}>{NAV.map((item) => { const active = pathname?.startsWith(item.href); const Icon = item.icon; return <Link key={item.href} href={item.href} className={`flex flex-col items-center gap-1 px-0.5 py-2.5 text-[10px] font-semibold ${active ? "text-[var(--color-brass)]" : "text-[var(--color-muted)]"}`}><span className={`flex size-8 items-center justify-center rounded-xl ${active ? "bg-[var(--color-brass-soft)]" : ""}`}><Icon size={17} /></span>{item.label}</Link>; })}</div></nav>
+  </div>;
 }
