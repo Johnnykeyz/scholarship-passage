@@ -1,199 +1,66 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { useRef, useEffect } from "react";
 import gsap from "gsap";
-import { ArrowUpRight, Compass, ClipboardCheck, FolderKanban, BellRing } from "lucide-react";
+import { ArrowRight, ArrowUpRight, CheckCircle2, ClipboardCheck, Compass, FileText, FolderKanban, BellRing, ShieldCheck } from "lucide-react";
 import { RouteMap } from "@/components/visuals/RouteMap";
 import { DocumentStack } from "@/components/visuals/DocumentStack";
 import { useScrollReveal } from "@/lib/hooks/useScrollReveal";
 
 const JOURNEY = [
-  { step: "Discover", detail: "Search scholarships, university programs, fellowships and research positions worldwide.", icon: Compass },
-  { step: "Check eligibility", detail: "See where you stand against real requirements — not a guess.", icon: ClipboardCheck },
-  { step: "Prepare", detail: "Every application gets its own requirements checklist, tasks, and deadlines.", icon: FolderKanban },
-  { step: "Track", detail: "Follow each application from preparing to decision, in one place.", icon: BellRing },
+  { step: "Discover", detail: "Find scholarships and global opportunities that fit your goals.", icon: Compass },
+  { step: "Understand", detail: "See official requirements clearly, with sources you can trust.", icon: ClipboardCheck },
+  { step: "Prepare", detail: "Turn every requirement into a practical checklist and next step.", icon: FolderKanban },
+  { step: "Move forward", detail: "Keep deadlines, documents, and progress together until you submit.", icon: BellRing },
 ];
 
-const STATS = [
-  { value: "Chevening", label: "UK — fully funded master's" },
-  { value: "Commonwealth", label: "UK — fully funded PhD" },
-  { value: "DAAD EPOS", label: "Germany — development-related master's" },
-];
+const TRUST_POINTS = ["Official source links", "Personal readiness tracking", "One workspace for every application"];
 
 export default function LandingPage() {
   const heroRef = useRef<HTMLDivElement>(null);
   const journeyRef = useScrollReveal<HTMLDivElement>();
-  const statsRef = useScrollReveal<HTMLDivElement>();
   const ctaRef = useScrollReveal<HTMLDivElement>();
-
   useEffect(() => {
-    const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    if (!heroRef.current || prefersReducedMotion) return;
-
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
-      tl.from(".hero-eyebrow", { opacity: 0, y: 10, duration: 0.5 })
-        .from(".hero-title-line", { opacity: 0, y: 28, duration: 0.7, stagger: 0.08 }, "-=0.25")
-        .from(".hero-sub", { opacity: 0, y: 16, duration: 0.6 }, "-=0.35")
-        .from(".hero-cta", { opacity: 0, y: 12, duration: 0.5, stagger: 0.08 }, "-=0.3");
-    }, heroRef);
-
+    if (!heroRef.current || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ctx = gsap.context(() => gsap.from(".hero-item", { opacity: 0, y: 18, duration: .65, stagger: .08, ease: "power3.out" }), heroRef);
     return () => ctx.revert();
   }, []);
 
   return (
-    <div className="flex-1 bg-[var(--color-paper)] overflow-x-hidden">
-      <header className="border-b border-[var(--color-line)] sticky top-0 bg-[var(--color-paper)]/90 backdrop-blur z-20">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 py-4 sm:py-5 flex items-center justify-between">
-          <span className="font-serif text-lg font-semibold tracking-tight">Passage</span>
-          <nav className="flex items-center gap-3 sm:gap-6 text-sm">
-            <Link
-              href="/opportunities"
-              className="hidden sm:inline text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
-            >
-              Explore opportunities
-            </Link>
-            <Link
-              href="/countries"
-              className="hidden sm:inline text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
-            >
-              Countries
-            </Link>
-            <Link href="/login" className="text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]">
-              Log in
-            </Link>
-            <Link
-              href="/signup"
-              className="rounded-sm bg-[var(--color-ink)] px-3.5 sm:px-4 py-2 text-white hover:bg-[var(--color-ink-soft)] transition-colors"
-            >
-              Start free
-            </Link>
+    <div className="flex-1 overflow-x-hidden bg-[var(--color-paper)]">
+      <header className="sticky top-0 z-20 border-b border-[var(--color-line)] bg-[var(--color-paper)]/90 backdrop-blur-xl">
+        <div className="mx-auto flex max-w-7xl items-center justify-between px-5 py-4 sm:px-8">
+          <Link href="/" aria-label="Passage home"><Image src="/passage.png" alt="Passage" width={132} height={38} className="h-9 w-auto object-contain" priority /></Link>
+          <nav className="flex items-center gap-3 text-sm sm:gap-7">
+            <Link href="/opportunities" className="hidden text-[var(--color-ink-soft)] transition-colors hover:text-[var(--color-brass)] sm:inline">Explore</Link>
+            <Link href="/countries" className="hidden text-[var(--color-ink-soft)] transition-colors hover:text-[var(--color-brass)] sm:inline">Countries</Link>
+            <Link href="/login" className="font-semibold text-[var(--color-ink-soft)] hover:text-[var(--color-brass)]">Log in</Link>
+            <Link href="/signup" className="btn-primary px-4 py-2.5">Get started <ArrowUpRight size={15} /></Link>
           </nav>
         </div>
       </header>
 
-      <section
-        ref={heroRef}
-        className="relative mx-auto max-w-6xl px-5 sm:px-6 pt-14 sm:pt-20 pb-14 sm:pb-16 border-b border-[var(--color-line)] grid lg:grid-cols-[1.1fr_0.9fr] gap-10 lg:gap-8 items-center"
-      >
-        <div>
-          <p className="hero-eyebrow text-sm font-medium text-[var(--color-brass)] mb-4">
-            Scholarships · University programs · Research opportunities
-          </p>
-          <h1 className="font-serif text-4xl sm:text-6xl leading-[1.08] max-w-3xl">
-            <span className="hero-title-line block">Your journey to</span>
-            <span className="hero-title-line block">global education,</span>
-            <span className="hero-title-line block">organized.</span>
-          </h1>
-          <p className="hero-sub mt-6 max-w-xl text-base sm:text-lg text-[var(--color-ink-soft)] leading-relaxed">
-            Discover fully funded scholarships, university programs and research
-            opportunities. See what each one requires, what you already have, and
-            what to work on next — without another spreadsheet.
-          </p>
-          <div className="mt-8 flex flex-wrap items-center gap-3 sm:gap-4">
-            <Link
-              href="/opportunities"
-              className="hero-cta inline-flex items-center gap-1.5 rounded-sm bg-[var(--color-brass)] px-5 py-3 text-white font-medium hover:bg-[#94430a] transition-colors active:scale-[0.98]"
-            >
-              Explore opportunities
-              <ArrowUpRight size={16} />
-            </Link>
-            <Link
-              href="/signup"
-              className="hero-cta inline-flex items-center gap-1.5 rounded-sm border border-[var(--color-ink)] px-5 py-3 font-medium hover:bg-[var(--color-paper-dim)] transition-colors active:scale-[0.98]"
-            >
-              Start your application plan
-            </Link>
+      <main>
+        <section ref={heroRef} className="relative mx-auto grid max-w-7xl items-center gap-12 px-5 pb-20 pt-16 sm:px-8 lg:grid-cols-[1.05fr_.95fr] lg:pb-28 lg:pt-24">
+          <div className="hero-item relative z-10">
+            <div className="mb-5 inline-flex items-center gap-2 rounded-full border border-[var(--color-line)] bg-white px-3 py-1.5 text-xs font-bold uppercase tracking-[.14em] text-[var(--color-brass)]"><ShieldCheck size={14} /> Prepare with confidence</div>
+            <h1 className="max-w-3xl font-serif text-5xl leading-[1.02] tracking-[-.03em] sm:text-7xl">Your next opportunity deserves a clear plan.</h1>
+            <p className="mt-6 max-w-xl text-base leading-7 text-[var(--color-muted)] sm:text-lg">Passage helps ambitious students discover global scholarships, understand what each application needs, and make steady progress from idea to submission.</p>
+            <div className="mt-8 flex flex-wrap gap-3"><Link href="/opportunities" className="btn-primary">Explore opportunities <ArrowRight size={17} /></Link><Link href="/signup" className="btn-secondary">Build my readiness plan</Link></div>
+            <div className="mt-8 flex flex-wrap gap-x-6 gap-y-3 text-xs font-semibold text-[var(--color-muted)]">{TRUST_POINTS.map((point) => <span key={point} className="flex items-center gap-2"><CheckCircle2 size={15} className="text-[var(--color-verified)]" />{point}</span>)}</div>
           </div>
-        </div>
+          <div className="hero-item relative min-h-[350px] overflow-hidden rounded-[1.5rem] border border-[var(--color-line)] bg-white p-3 shadow-[0_24px_70px_rgba(16,35,63,.12)] sm:min-h-[430px]"><div className="h-full overflow-hidden rounded-[1rem] border border-[var(--color-line)] bg-[#f3f7fb]"><RouteMap /></div><div className="absolute bottom-7 left-7 rounded-xl border border-white/70 bg-white/90 px-4 py-3 shadow-lg backdrop-blur"><p className="text-xs font-bold uppercase tracking-wider text-[var(--color-muted)]">Your journey</p><p className="mt-1 font-semibold">Discover → prepare → submit</p></div></div>
+        </section>
 
-        <div className="relative h-56 sm:h-72 lg:h-80 rounded-sm border border-[var(--color-line)] bg-white overflow-hidden">
-          <RouteMap />
-          <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between text-[10px] sm:text-xs text-[var(--color-muted)] font-medium">
-            <span>8 cities</span>
-            <span>Your applications, mapped</span>
-          </div>
-        </div>
-      </section>
+        <section ref={journeyRef} className="border-y border-[var(--color-line)] bg-white"><div className="mx-auto max-w-7xl px-5 py-16 sm:px-8 lg:py-20"><div className="max-w-2xl" data-reveal><p className="mb-3 text-xs font-bold uppercase tracking-[.16em] text-[var(--color-brass)]">A calmer way to apply</p><h2 className="font-serif text-3xl tracking-tight sm:text-5xl">Less guesswork. More meaningful progress.</h2><p className="mt-4 leading-7 text-[var(--color-muted)]">A scholarship search is only the beginning. Passage gives you the structure to understand each opportunity and keep moving.</p></div><div className="mt-12 grid gap-6 sm:grid-cols-2 lg:grid-cols-4">{JOURNEY.map((item, i) => { const Icon = item.icon; return <div key={item.step} data-reveal className="card-lift rounded-2xl border border-[var(--color-line)] bg-[var(--color-paper)] p-6"><div className="flex items-center justify-between"><span className="flex size-11 items-center justify-center rounded-xl bg-[var(--color-brass-soft)] text-[var(--color-brass)]"><Icon size={21} /></span><span className="font-serif text-3xl text-[#cbd7e4]">0{i + 1}</span></div><h3 className="mt-7 text-lg font-bold">{item.step}</h3><p className="mt-2 text-sm leading-6 text-[var(--color-muted)]">{item.detail}</p></div>; })}</div></div></section>
 
-      <section ref={journeyRef} className="mx-auto max-w-6xl px-5 sm:px-6 py-14 sm:py-16 border-b border-[var(--color-line)]">
-        <h2 data-reveal className="font-serif text-2xl sm:text-3xl mb-10">
-          From &ldquo;where do I start&rdquo; to submitted.
-        </h2>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-x-8 gap-y-10">
-          {JOURNEY.map((item, i) => (
-            <div key={item.step} data-reveal className="flex flex-col gap-3">
-              <div className="flex items-center gap-3">
-                <span className="flex items-center justify-center size-9 rounded-sm bg-[var(--color-brass-soft)] text-[var(--color-brass)]">
-                  <item.icon size={17} strokeWidth={2} />
-                </span>
-                <span className="font-serif text-xl text-[var(--color-line)] leading-none">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-              </div>
-              <div>
-                <h3 className="font-medium mb-1">{item.step}</h3>
-                <p className="text-sm text-[var(--color-muted)] leading-relaxed">{item.detail}</p>
-              </div>
-            </div>
-          ))}
-        </div>
-      </section>
+        <section className="mx-auto grid max-w-7xl items-center gap-12 px-5 py-16 sm:px-8 lg:grid-cols-2 lg:py-24"><div><p className="mb-3 text-xs font-bold uppercase tracking-[.16em] text-[var(--color-brass)]">Readiness, made visible</p><h2 className="font-serif text-3xl tracking-tight sm:text-5xl">Know what is done, missing, and next.</h2><p className="mt-5 max-w-lg leading-7 text-[var(--color-muted)]">Keep official requirements and your own tasks in a single application workspace. Upload documents once, track versions, and get a clear view of your readiness before the deadline.</p><div className="mt-7 space-y-4 text-sm font-semibold"><p className="flex items-center gap-3"><CheckCircle2 className="text-[var(--color-verified)]" size={19} />Requirements that reflect the real opportunity</p><p className="flex items-center gap-3"><FileText className="text-[var(--color-brass)]" size={19} />A document vault for your application essentials</p><p className="flex items-center gap-3"><BellRing className="text-[var(--color-urgent)]" size={19} />Deadline awareness without the spreadsheet chaos</p></div></div><div className="rounded-[1.5rem] border border-[var(--color-line)] bg-white p-4 shadow-[0_20px_60px_rgba(16,35,63,.08)]"><DocumentStack /></div></section>
 
-      <section className="mx-auto max-w-6xl px-5 sm:px-6 py-14 sm:py-16 border-b border-[var(--color-line)] grid lg:grid-cols-2 gap-10 items-center">
-        <div>
-          <h2 className="font-serif text-2xl sm:text-3xl mb-4">
-            Every requirement, official or yours, in one checklist.
-          </h2>
-          <p className="text-[var(--color-muted)] leading-relaxed max-w-md">
-            Found a requirement the platform doesn&apos;t know about — a portfolio,
-            a recommendation the department asked for specifically? Add it
-            yourself. It becomes part of your personal application plan,
-            right next to the official requirements.
-          </p>
-        </div>
-        <DocumentStack />
-      </section>
-
-      <section ref={statsRef} className="mx-auto max-w-6xl px-5 sm:px-6 py-14 sm:py-16 border-b border-[var(--color-line)]">
-        <p data-reveal className="text-sm font-medium text-[var(--color-muted)] uppercase tracking-wide mb-6">
-          Real opportunities, verified sources
-        </p>
-        <div className="grid sm:grid-cols-3 gap-4">
-          {STATS.map((s) => (
-            <div key={s.value} data-reveal className="rounded-sm border border-[var(--color-line)] bg-white p-5">
-              <p className="font-serif text-xl mb-1">{s.value}</p>
-              <p className="text-sm text-[var(--color-muted)]">{s.label}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section ref={ctaRef} className="mx-auto max-w-6xl px-5 sm:px-6 py-14 sm:py-16">
-        <div data-reveal className="rounded-sm border border-[var(--color-line)] bg-white p-7 sm:p-12">
-          <p className="font-serif text-xl sm:text-2xl leading-snug max-w-2xl">
-            Not &ldquo;here are 500 scholarships.&rdquo; Here are the opportunities relevant
-            to you, what each one requires, what you already have, and what
-            you&apos;re missing.
-          </p>
-          <Link
-            href="/signup"
-            className="mt-6 inline-flex items-center gap-1.5 text-[var(--color-brass)] font-medium hover:underline"
-          >
-            Create your profile
-            <ArrowUpRight size={16} />
-          </Link>
-        </div>
-      </section>
-
-      <footer className="border-t border-[var(--color-line)] py-8">
-        <div className="mx-auto max-w-6xl px-5 sm:px-6 text-sm text-[var(--color-muted)]">
-          Opportunity information is sourced from official channels where
-          possible and marked with a last-verified date. Always confirm
-          details on the official website before applying.
-        </div>
-      </footer>
+        <section ref={ctaRef} className="mx-auto max-w-7xl px-5 pb-20 sm:px-8 lg:pb-28"><div data-reveal className="relative overflow-hidden rounded-[1.5rem] bg-[var(--color-ink)] px-7 py-12 text-white sm:px-12 lg:flex lg:items-center lg:justify-between"><div className="absolute -right-16 -top-24 size-72 rounded-full border-[36px] border-[var(--color-brass)]/20" /><div className="relative"><p className="text-xs font-bold uppercase tracking-[.16em] text-[#ffb094]">Start with one clear next step</p><h2 className="mt-3 max-w-2xl font-serif text-3xl sm:text-4xl">Build the application plan you wish you had sooner.</h2></div><Link href="/signup" className="btn-primary relative mt-8 shrink-0 bg-[var(--color-brass)] lg:mt-0">Create my free plan <ArrowRight size={17} /></Link></div></section>
+      </main>
+      <footer className="border-t border-[var(--color-line)] bg-white"><div className="mx-auto flex max-w-7xl flex-col gap-5 px-5 py-8 text-sm text-[var(--color-muted)] sm:px-8 sm:flex-row sm:items-center sm:justify-between"><Image src="/passage.png" alt="Passage" width={108} height={31} className="h-7 w-auto object-contain" /><p>Always verify opportunity details on the official website before applying.</p></div></footer>
     </div>
   );
 }
